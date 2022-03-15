@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 file(GLOB SOURCES
     ./src/*.cpp
     ./src/*.h
@@ -15,6 +19,7 @@ add_definitions( -DBOOST_ALL_DYN_LINK )
 
 find_package(Boost REQUIRED COMPONENTS
     system
+    filesystem
     thread
     exception
 )
@@ -22,25 +27,25 @@ find_package(Boost REQUIRED COMPONENTS
 find_package (Threads)
 
 if (Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIR})
-    include_directories(${BOOST_INCLUDE_DIRS})
-    message("Boost_INCLUDE_DIR = " ${Boost_INCLUDE_DIR})
-    link_directories(${Boost_LIBRARY_DIRS})
     add_definitions("-DHAS_BOOST")
-
     add_definitions("-DBOOST_THREAD_USE_LIB")
 
+    include_directories(${Boost_INCLUDE_DIR})
+    include_directories(${BOOST_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARY_DIRS})
+    
     include_directories(${BOOST_ROOT})
 endif()
 
-add_executable(http-ser ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries (http-ser ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+target_link_libraries (${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
-target_include_directories(http-ser PUBLIC "${PROJECT_BINARY_DIR}")
-target_compile_features(http-ser PRIVATE cxx_std_17)
+target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_BINARY_DIR}")
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
-target_compile_options(http-ser PRIVATE
+target_compile_options(${PROJECT_NAME} PRIVATE
     -fsanitize=address
     -fsanitize=leak
     -fsanitize=undefined
@@ -48,10 +53,13 @@ target_compile_options(http-ser PRIVATE
     -fno-omit-frame-pointer
 )
 
-target_link_options(http-ser PRIVATE
+target_link_options(${PROJECT_NAME} PRIVATE
     -fsanitize=address
     -fsanitize=leak
     -fsanitize=undefined
     -fno-sanitize=vptr
     -fno-omit-frame-pointer
 )
+
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+

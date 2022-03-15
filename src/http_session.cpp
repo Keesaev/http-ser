@@ -1,4 +1,5 @@
 #include "http_session.h"
+#include "pages.h"
 
 #include <iostream>
 
