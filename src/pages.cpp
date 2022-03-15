@@ -4,7 +4,9 @@
 
 const std::string Pages::m_root{"resources/pages/"};
 
-bool Pages::contains(std::string const &path) {
+bool Pages::contains(boost::string_view path) {
+  return true;
+
   if (path.empty())
     return true; // index.html
 
@@ -13,15 +15,15 @@ bool Pages::contains(std::string const &path) {
       path.find("..") != std::string::npos || path.front() == '/') {
     return false;
   }
-  if (boost::filesystem::exists(m_root + path))
+  if (boost::filesystem::exists(m_root + path.data()))
     return true;
   else
     return false;
 }
 
 // Assuming that Pages::contains(path) -> true
-boost::beast::http::file_body::value_type Pages::get(std::string const &path) {
-  std::string full_path = m_root + path;
+boost::beast::http::file_body::value_type Pages::get(boost::string_view path) {
+  std::string full_path = m_root + path.data();
   if (path.empty() || boost::filesystem::is_directory(full_path))
     full_path.append("index.htmp");
   if (path.find(".html") == std::string::npos)
@@ -29,7 +31,9 @@ boost::beast::http::file_body::value_type Pages::get(std::string const &path) {
 
   boost::beast::error_code ec;
   boost::beast::http::file_body::value_type body;
-  body.open(full_path.c_str(), boost::beast::file_mode::scan, ec);
+  // body.open(full_path.c_str(), boost::beast::file_mode::scan, ec);
+  body.open("/home/keesaev/dev/http-ser/resources/pages/index.html",
+            boost::beast::file_mode::scan, ec);
 
   if (ec == boost::system::errc::no_such_file_or_directory) {
     throw NotFound();

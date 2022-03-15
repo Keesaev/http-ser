@@ -95,7 +95,42 @@ void HttpSession::handle_request() {
     return res;
   };
 
-  send_response(bad_request("Hello world"));
+  if (!Pages::contains(m_request.target()))
+    send_response(bad_request("Not found"));
+  // HEAD / GET
+  try {
+    auto body = Pages::get(m_request.target());
+    auto const size = body.size();
+
+    // Respond to HEAD request
+    if (m_request.method() == http::verb::head) {
+      std::cout << "HEAD" << std::endl;
+
+      http::response<http::empty_body> res{http::status::ok,
+                                           m_request.version()};
+      res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+      res.set(http::field::content_type, "text/html");
+      res.content_length(size);
+      res.keep_alive(m_request.keep_alive());
+      send_response(std::move(res));
+    } else {
+      std::cout << "GET" << std::endl;
+
+      // Respond to GET request
+      http::response<http::file_body> res{
+
+          std::piecewise_construct, std::make_tuple(std::move(body)),
+          std::make_tuple(http::status::ok, m_request.version())};
+      res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+      res.set(http::field::content_type, "text/html");
+      res.content_length(size);
+      res.keep_alive(m_request.keep_alive());
+      send_response(std::move(res));
+    }
+  } catch (NotFound &ex) {
+    std::cout << "NOT FOUND" << std::endl;
+    send_response(bad_request("Not found"));
+  }
 }
 
 HttpSession::~HttpSession() {
