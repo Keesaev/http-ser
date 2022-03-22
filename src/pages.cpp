@@ -2,7 +2,7 @@
 #include <boost/filesystem.hpp>
 #include <string>
 
-const std::string Pages::m_root{"resources/pages/"};
+Pages::Pages(const std::string &root_path) : m_root(root_path) {}
 
 bool Pages::contains(boost::string_view path) {
   return true;
@@ -15,7 +15,7 @@ bool Pages::contains(boost::string_view path) {
       path.find("..") != std::string::npos || path.front() == '/') {
     return false;
   }
-  if (boost::filesystem::exists(m_root + path.data()))
+  if (boost::filesystem::exists(m_root + std::string(path.data(), path.size())))
     return true;
   else
     return false;
@@ -23,9 +23,9 @@ bool Pages::contains(boost::string_view path) {
 
 // Assuming that Pages::contains(path) -> true
 boost::beast::http::file_body::value_type Pages::get(boost::string_view path) {
-  std::string full_path = m_root + path.data();
+  std::string full_path = m_root + std::string(path.data(), path.size());
   if (path.empty() || boost::filesystem::is_directory(full_path))
-    full_path.append("index.htmp");
+    full_path.append("index.html");
   if (path.find(".html") == std::string::npos)
     full_path.append(".html");
 

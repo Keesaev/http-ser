@@ -7,8 +7,9 @@
 
 namespace http = boost::beast::http;
 
-HttpSession::HttpSession(boost::asio::ip::tcp::socket &&socket)
-    : m_socket(std::move(socket)) {
+HttpSession::HttpSession(boost::asio::ip::tcp::socket &&socket,
+                         Pages const &pages)
+    : m_socket(std::move(socket)), m_pages(pages) {
   std::cout << "Creating HTTP session" << std::endl;
 }
 
@@ -95,11 +96,11 @@ void HttpSession::handle_request() {
     return res;
   };
 
-  if (!Pages::contains(m_request.target()))
+  if (!m_pages.contains(m_request.target()))
     send_response(bad_request("Not found"));
   // HEAD / GET
   try {
-    auto body = Pages::get(m_request.target());
+    auto body = m_pages.get(m_request.target());
     auto const size = body.size();
 
     // Respond to HEAD request

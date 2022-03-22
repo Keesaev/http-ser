@@ -16,8 +16,8 @@ namespace http = boost::beast::http;
 */
 
 Listener::Listener(boost::asio::io_context &context,
-                   boost::asio::ip::tcp::endpoint endpoint)
-    : m_io_context(context), m_acceptor(m_io_context), m_socket(context) {
+                   boost::asio::ip::tcp::endpoint endpoint, Pages &&pages)
+    : m_io_context(context), m_acceptor(m_io_context), m_socket(context), m_pages(pages) {
   boost::beast::error_code ec;
   // TODO: перенести в make-метод и делать throw?
   m_acceptor.open(endpoint.protocol(), ec);
@@ -60,7 +60,7 @@ void Listener::handle_accept(boost::beast::error_code ec) {
     return;
   } else {
     // HttpSession::run() controls it's lifetime
-    std::make_shared<HttpSession>(std::move(m_socket))->run();
+    std::make_shared<HttpSession>(std::move(m_socket), m_pages)->run();
   }
   start_accept();
 }
