@@ -24,7 +24,7 @@ find_package(Boost REQUIRED COMPONENTS
     thread
     exception
 )
-find_package(PkgConfig REQUIRED)
+#find_package(PkgConfig REQUIRED)
 
 find_package (Threads)
 
