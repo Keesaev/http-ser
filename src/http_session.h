@@ -6,12 +6,12 @@
 #include <boost/system/error_code.hpp>
 #include <memory>
 
-#include "pages.h"
+#include "page.h"
 
 class HttpSession : public std::enable_shared_from_this<HttpSession> {
 public:
-  HttpSession(boost::asio::ip::tcp::socket &&socket, Pages const &pages);
-  ~HttpSession();
+  HttpSession(boost::asio::ip::tcp::socket &&socket,
+              std::string const &root_path);
   void run();
 
 private:
@@ -27,5 +27,5 @@ private:
   template <class Body>
   void send_response(boost::beast::http::response<Body> &&response);
 
-  Pages m_pages;
+  const std::string m_root_path;
 };

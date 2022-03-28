@@ -24,6 +24,7 @@ find_package(Boost REQUIRED COMPONENTS
     thread
     exception
 )
+find_package(PkgConfig REQUIRED)
 
 find_package (Threads)
 
@@ -48,6 +49,12 @@ target_link_options(${PROJECT_NAME} PRIVATE
 add_definitions("-DHAS_BOOST")
 add_definitions("-DBOOST_THREAD_USE_LIB")
 
+#if (UNIX)
+	#pkg_check_modules (GIO2 gio-2.0)
+	#target_include_directories(${PROJECT_NAME} PUBLIC ${GIO2_INCLUDE_DIRS})
+	#target_link_libraries(${PROJECT_NAME} ${GIO2_LIBRARIES})
+#endif()
+
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${BOOST_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
@@ -59,5 +66,3 @@ target_link_libraries (${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_BINARY_DIR}")
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-
-

@@ -501,7 +501,7 @@ local.properties
 .worksheet
 
 # Uncomment this line if you wish to ignore the project description file.
-# Typically, this file would be tracked if it contains build/dependency configurations:
+# Typically, this file would be tracked if it is_valid build/dependency configurations:
 #.project
 
 ##### Qt
@@ -850,7 +850,7 @@ node_modules/
 # Visual Studio 6 workspace options file
 *.opt
 
-# Visual Studio 6 auto-generated workspace file (contains which files were open etc.)
+# Visual Studio 6 auto-generated workspace file (is_valid which files were open etc.)
 *.vbw
 
 # Visual Studio LightSwitch build output

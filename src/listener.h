@@ -4,12 +4,11 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core/error.hpp>
 
-#include "pages.h"
-
 class Listener {
 public:
   Listener(boost::asio::io_context &context,
-           boost::asio::ip::tcp::endpoint endpoint, Pages &&pages);
+           boost::asio::ip::tcp::endpoint endpoint,
+           std::string const &root_path);
   void start_accept();
 
 private:
@@ -18,6 +17,6 @@ private:
   boost::asio::io_context &m_io_context;
   boost::asio::ip::tcp::acceptor m_acceptor;
   boost::asio::ip::tcp::socket m_socket;
-  Pages m_pages;
-};
 
+  const std::string m_root_path;
+};
